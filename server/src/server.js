@@ -1,6 +1,5 @@
 import 'dotenv/config';
 import { createServer } from 'node:http';
-import dns from 'node:dns';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -8,6 +7,7 @@ import { Server } from 'socket.io';
 import ticketsRouter from './routes/tickets.js';
 import { Ticket } from './models/Ticket.js';
 import { ticketLocks, releaseSocketLocks } from './socket/ticketLocks.js';
+import { configureMongoDns } from './config/database.js';
 
 const port = process.env.PORT || 5000;
 const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
@@ -57,7 +57,7 @@ io.on('connection', (socket) => {
 async function start() {
   try {
     if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is not configured. Copy .env.example to .env and add your Atlas URI.');
-    if (process.env.MONGODB_DNS_SERVER) dns.setServers([process.env.MONGODB_DNS_SERVER]);
+    configureMongoDns();
     await mongoose.connect(process.env.MONGODB_URI);
     httpServer.listen(port, () => console.log(`RapidDispatch API listening on port ${port}`));
   } catch (error) { console.error(`Startup failed: ${error.message}`); process.exit(1); }

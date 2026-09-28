@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import mongoose from 'mongoose';
 import { Ticket } from './models/Ticket.js';
+import { configureMongoDns } from './config/database.js';
 
 const tickets = [
   { ticketNumber: 105, customer: 'Dallas Freight Co.', issue: 'Truck breakdown', description: 'Unit TX-482 is disabled near Denton with temperature-sensitive cargo on board.', priority: 'High', status: 'In Progress', assignedAgent: 'Agent A', resolution: '' },
@@ -18,6 +19,7 @@ const tickets = [
 async function seed() {
   try {
     if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is not configured.');
+    configureMongoDns();
     await mongoose.connect(process.env.MONGODB_URI);
     await Ticket.deleteMany({});
     await Ticket.insertMany(tickets);
