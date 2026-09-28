@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { createServer } from 'node:http';
+import dns from 'node:dns';
 import express from 'express';
 import cors from 'cors';
 import mongoose from 'mongoose';
@@ -56,6 +57,7 @@ io.on('connection', (socket) => {
 async function start() {
   try {
     if (!process.env.MONGODB_URI) throw new Error('MONGODB_URI is not configured. Copy .env.example to .env and add your Atlas URI.');
+    if (process.env.MONGODB_DNS_SERVER) dns.setServers([process.env.MONGODB_DNS_SERVER]);
     await mongoose.connect(process.env.MONGODB_URI);
     httpServer.listen(port, () => console.log(`RapidDispatch API listening on port ${port}`));
   } catch (error) { console.error(`Startup failed: ${error.message}`); process.exit(1); }
