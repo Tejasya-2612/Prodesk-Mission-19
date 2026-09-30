@@ -10,7 +10,8 @@ import { ticketLocks, releaseSocketLocks } from './socket/ticketLocks.js';
 import { configureMongoDns } from './config/database.js';
 
 const port = process.env.PORT || 5000;
-const allowedOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const configuredOrigin = process.env.CLIENT_URL || 'http://localhost:5173';
+const allowedOrigin = new URL(configuredOrigin).origin;
 const app = express();
 app.use(cors({ origin: allowedOrigin, methods: ['GET', 'POST', 'PUT', 'DELETE'] }));
 app.use(express.json());
